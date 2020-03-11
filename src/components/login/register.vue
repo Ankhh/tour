@@ -6,9 +6,9 @@
           <el-input v-model="ruleForm.displayName"></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
-          <el-select v-model="ruleForm.region" placeholder="请选择性别">
-            <el-option label="男" value="male"></el-option>
-            <el-option label="女" value="female"></el-option>
+          <el-select v-model="ruleForm.sex" placeholder="请选择性别">
+            <el-option label="男" value="1"></el-option>
+            <el-option label="女" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="密码" prop="password">
@@ -16,6 +16,9 @@
         </el-form-item>
         <el-form-item label="真实姓名" prop="name">
           <el-input v-model="ruleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="ruleForm.phone"></el-input>
         </el-form-item>
         <el-form-item label="生日" prop="dob">
           <el-date-picker
@@ -42,15 +45,16 @@
           password: '',
           name: '',
           dob: '',
+          phone: '',
         },
         rules: {
           displayName: [
             { required: true, message: '请输入活动名称', trigger: 'blur' },
             { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
           ],
-          // sex: [
-          //   { required: true, message: '请选择性别', }
-          // ],
+          phone: [
+            { required: true, message: '请输入手机号', }
+          ],
           password: [
             { required: true,  message: '要输入密码', trigger: 'blur' },
           ],
@@ -63,14 +67,16 @@
     methods: {
       // 提交事件
       async submitForm(ruleForm) {
-        const res = await this.$http.post("user/register", this.ruleForm);
-        if (res.data.code === 200) {
+        const res = await this.$http.post("user/add ", this.ruleForm);
+        const { code, message } = res.data
+        console.log(code)
+        if (code === 200) {
           this.$message.success("注册成功")
           this.$router.push({
             name: 'login',
           })
         } else {
-          this.$message.error(res.data.message)
+          this.$message.error(message)
         }
       },
       // 重置事件

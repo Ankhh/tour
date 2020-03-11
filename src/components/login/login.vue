@@ -3,7 +3,7 @@
     <el-form label-position="left" label-width="80px" :model="formdata" class="form">
       <h2 style="text-align: center; margin-bottom: 20px">用户登录</h2>
       <el-form-item label="用户名">
-        <el-input v-model="formdata.name" name="name"></el-input>
+        <el-input v-model="formdata.phone" name="phone"></el-input>
       </el-form-item>
       <el-form-item label="密码">
         <el-input v-model="formdata.password" name="password"></el-input>
@@ -19,14 +19,14 @@ export default {
   data() {
     return {
       formdata: {
-        name: "",
+        phone: "",
         password: ""
       }
     };
   },
   methods: {
     async handleLogin() {
-      const res = await this.$http.post("user/login", this.formdata);
+      const res = await this.$http.post(`user/login?phone=${this.formdata.phone}&password=${this.formdata.password}`);
       console.log(res)
 
       if (res.data.code === 200) {

@@ -40,6 +40,10 @@
                 <i class="el-icon-s-open"></i>
                 <span slot="title">旅游路线信息管理</span>
               </el-menu-item>
+              <el-menu-item index="tourist_goods">
+                <i class="el-icon-date"></i>
+                <span slot="title">旅游商品管理</span>
+              </el-menu-item>
               <el-menu-item index="contract_order">
                 <i class="el-icon-files"></i>
                 <span slot="title">合同订单管理</span>

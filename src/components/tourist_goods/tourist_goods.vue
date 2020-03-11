@@ -1,54 +1,36 @@
 <template>
   <el-card>
-    <my-bread level1="系统用户管理"></my-bread>
+    <my-bread level1="旅游商品管理"></my-bread>
     <!-- 搜索框 -->
     <el-row class="searchArea">
       <el-col :span="20">
         <el-input v-model="searchValue" class="searchInput" clearable placeholder="请输入用户名">
           <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <!-- <el-button @click="$router.push({name:'goodsadd'})" type="success" plain>添加商品</el-button> -->
       </el-col>
     </el-row>
-    
+    <!-- 按钮 -->
+    <el-row>
+      <el-col>
+        <el-button type="success" plain size="mini" @click="addUser()">添加商品</el-button>
+      </el-col>
+    </el-row>
     <!-- 表格 -->
-    <!-- 
-      表格
-        el-table-column：每一列
-        prop：每一行的数据名，来源于tableData数组中的对象值
-    -->
     <el-table v-loading="loading" :data="list" style="width: 100%" height="400px">
-      <el-table-column prop="id" label="id" width="80"></el-table-column>
-      <el-table-column prop="displayName" label="用户名" width="110"></el-table-column>
-      <el-table-column prop="phone" label="电话" width="160"></el-table-column>
-      <el-table-column prop="createTime" label="创建日期" width="170">
-        <template slot-scope="scope">{{scope.row.create_time | fmtDate}}</template>
-      </el-table-column>
-      <el-table-column prop="isActive" label="用户状态" width="160">
-        <template slot-scope="scope">
-          <el-switch
-            @change="changeStatus(scope.row)"
-            v-model="scope.row.isActive"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-          ></el-switch>
-        </template>
-      </el-table-column>
+      <el-table-column prop="id" label="id" width="120"></el-table-column>
+      <el-table-column prop="goods_name" label="商品名称" width="160"></el-table-column>
+      <el-table-column prop="goods_price" label="商品价格" width="160"></el-table-column>
+      <el-table-column prop="goods_url" label="商品地址" width="200"></el-table-column>
       <el-table-column prop="date" label="操作" width="210">
         <template slot-scope="scope">
           <el-row>
-            <el-button
-              type="danger"
-              icon="el-icon-delete"
-              circle
-              plain
-              size="mini"
-              @click="deleteUser(scope.row.id)"
-            ></el-button>
+            <el-button type="primary" icon="el-icon-edit" circle plain size="mini" @click="editUser(scope.row)"></el-button>
+            <el-button type="danger" icon="el-icon-delete" circle plain size="mini" @click="deleteUser(scope.row.id)"></el-button>
           </el-row>
         </template>
       </el-table-column>
     </el-table>
+    
     <!-- 分页 -->
     <el-pagination
       class="pagination"
@@ -61,27 +43,24 @@
       :total="total"
     ></el-pagination>
 
-    <!-- 添加用户表单
-    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
+    <!-- 添加用户表单 -->
+    <el-dialog title="添加商品" :visible.sync="dialogFormVisibleAdd">
       <el-form :model="form">
-        <el-form-item label="用户名" :label-width="formLabelWidth">
-          <el-input v-model="form.username" autocomplete="off"></el-input>
+        <el-form-item label="商品名称" :label-width="formLabelWidth">
+          <el-input v-model="form.goods_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.password" autocomplete="off"></el-input>
+        <el-form-item label="商品价格" :label-width="formLabelWidth">
+          <el-input v-model="form.goods_price" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" :label-width="formLabelWidth">
-          <el-input v-model="form.email" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="电话" :label-width="formLabelWidth">
-          <el-input v-model="form.mobile" autocomplete="off"></el-input>
+        <el-form-item label="商品地址" :label-width="formLabelWidth">
+          <el-input v-model="form.goods_url" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
-        <el-button type="primary" @click="handelAddUser()">确 定</el-button>
+        <el-button type="primary" @click="submitForm(form)">确 定</el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
     
   </el-card>
 </template>
@@ -96,6 +75,11 @@
         total: 0,
         searchValue: '',
         loading: false,
+        form: {
+          goods_name: "",
+          goods_price: "",
+          goods_url: "",
+        },
         formLabelWidth: "80px",
         dialogFormVisibleAdd: false,
       }
@@ -104,9 +88,15 @@
       this.handleTableData();
     },
     methods: {
+      // 表格数据
       async handleTableData() {
-        // this.loading = true;
-        const res = await this.$http.get(`user/findAll/${this.pageNum}/${this.pageSize}`)
+        this.loading = true;
+        const page = {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }
+        const res = await this.$http.post('goods/search', page)
+        console.log(res)
         const { data: { data, code, message } } = res
         console.log(data, code, message)
         if (code === 200) {
@@ -118,12 +108,14 @@
           this.$message.error(res.message)
         }
       },
+      // 分页
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
         this.pageSize = val;
         this.pageNum = 1;
         this.handleTableData();
       },
+      // 当前页
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`)
         this.pageNum = val;
@@ -153,6 +145,25 @@
           .catch(() => {
             this.$message.warning("取消删除");
           });
+      },
+      // 打开新建按钮
+      addUser() {
+        this.dialogFormVisibleAdd = true;
+        this.form = {};
+      },
+      // 提交新建表单
+      submitForm(form) {
+        console.log(form)
+        this.dialogFormVisibleAdd = false;
+        this.$refs[form].validate((valid) => {
+          console.log(valid)
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
     }
   }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { Message } from 'element-ui'
 
 Vue.use(Router)
 
@@ -13,8 +14,9 @@ const ContractOrder = () => import('@/components/contract_order/contract_order.v
 const PriceControl = () => import('@/components/price_control/price_control.vue')
 const EvaluationManagement = () => import('@/components/evaluation_management/evaluation_management.vue')
 const Personal = () => import('@/components/personal/personal.vue')
+const TouristGoods = () => import('@/components/tourist_goods/tourist_goods.vue')
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -56,6 +58,11 @@ export default new Router({
           name: 'personal',
           path: 'personal',
           component: Personal,
+        },
+        {
+          name: 'tourist_goods',
+          path: 'tourist_goods',
+          component: TouristGoods,
         }
       ]
     },
@@ -71,3 +78,28 @@ export default new Router({
     }
   ]
 })
+
+// 拦截路由配置
+// router.beforeEach((to, from, next) => {
+//   // console.log(to, from);
+//   // console.log("路由守卫，拦截执行");
+//   // next();
+//   if (to.name === 'login') {
+//     next();
+//   } else if (to.name === 'register') {
+//     next()
+//   } else {
+//     const token = localStorage.getItem('token');
+//     if (!token) {
+//       // this.$router->vm.路由对象->路由对象.push  
+//       Message.warning('请先登录');
+//       router.push({
+//         name: 'login'
+//       })
+//     } else {
+//       next();
+//     }
+//   }
+// })
+
+export default router;

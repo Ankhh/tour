@@ -17,7 +17,6 @@ Http.install = function (Vue) {
     if (config.url !== "user/login") {
       const AUTH_TOKEN = localStorage.getItem("token")
       // this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN
-      console.log(AUTH_TOKEN)
       config.headers.Authorization = AUTH_TOKEN
     }
     return config
@@ -27,25 +26,25 @@ Http.install = function (Vue) {
   })
 
   // 添加响应拦截器
-  // axios.interceptors.response.use(function (response) {
-  //   // 对响应数据做点什么
-  //   // console.log("拦截器----");
+  axios.interceptors.response.use(function (response) {
+    // 对响应数据做点什么
+    // console.log("拦截器----");
 
-  //   console.log(response);
-  //   const {
-  //     message,
-  //     code
-  //   } = response.data;
-  //   // 统一处理所有非200和201的响应
-  //   if (code !== 200 && code !== 201) {
-  //     Message.warning(message);
-  //   }
+    // console.log(response);
+    const {
+      message,
+      code
+    } = response.data;
+    // 统一处理所有非200和201的响应
+    if (code !== 200 && code !== 201) {
+      Message.warning(message);
+    }
 
-  //   return response;
-  // }, function (error) {
-  //   // 对响应错误做点什么
-  //   return Promise.reject(error);
-  // });
+    return response;
+  }, function (error) {
+    // 对响应错误做点什么
+    return Promise.reject(error);
+  });
 
   // 4. 添加实例方法
   Vue.prototype.$http = axios
