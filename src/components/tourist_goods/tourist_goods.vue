@@ -37,28 +37,28 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="pageNum"
-      :page-sizes="[2,4,6,8]"
-      :page-size="10"
-      layout="total, sizes, prev, pager, next, jumper"
+      :page-size="pageSize"
+      layout="total, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
 
     <!-- 添加用户表单 -->
     <el-dialog title="添加商品" :visible.sync="dialogFormVisibleAdd">
-      <el-form :model="form">
+      <!--  <el-form :model="ruleForm"> -->
+      <el-form :model="ruleForm" ref="ruleForm">
         <el-form-item label="商品名称" :label-width="formLabelWidth">
-          <el-input v-model="form.goods_name" autocomplete="off"></el-input>
+          <el-input v-model="ruleForm.goods_name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="商品价格" :label-width="formLabelWidth">
-          <el-input v-model="form.goods_price" autocomplete="off"></el-input>
+          <el-input v-model="ruleForm.goods_price" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="商品地址" :label-width="formLabelWidth">
-          <el-input v-model="form.goods_url" autocomplete="off"></el-input>
+          <el-input v-model="ruleForm.goods_url" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm(form)">确 定</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
       </div>
     </el-dialog>
     
@@ -75,7 +75,7 @@
         total: 0,
         searchValue: '',
         loading: false,
-        form: {
+        ruleForm: {
           goods_name: "",
           goods_price: "",
           goods_url: "",
@@ -149,14 +149,13 @@
       // 打开新建按钮
       addUser() {
         this.dialogFormVisibleAdd = true;
-        this.form = {};
+        this.ruleForm = {};
       },
       // 提交新建表单
-      submitForm(form) {
-        console.log(form)
+      submitForm(formName) {
+        console.log(formName)
         this.dialogFormVisibleAdd = false;
-        this.$refs[form].validate((valid) => {
-          console.log(valid)
+        this.$refs[formName].validate((valid) => {
           if (valid) {
             alert('submit!');
           } else {

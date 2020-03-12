@@ -54,7 +54,7 @@
               </el-menu-item>
               <el-menu-item index="evaluation_management">
                 <i class="el-icon-mobile"></i>
-                <span slot="title">客户对服务的评价管理</span>
+                <span slot="title">留言板管理</span>
               </el-menu-item>
             </el-menu>
           </el-col>

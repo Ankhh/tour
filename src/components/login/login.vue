@@ -9,7 +9,7 @@
         <el-input v-model="formdata.password" name="password"></el-input>
       </el-form-item>
       <el-button type="primary" class="btn" @click="handleLogin">登录</el-button>
-      <a class="register" @click="handleRegister()">没有账号？点击注册</a>
+      <el-link type="primary" class="register" @click="handleRegister()">没有账号？点击注册</el-link>
     </el-form>
   </div>
 </template>
