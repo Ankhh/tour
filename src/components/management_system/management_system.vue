@@ -5,7 +5,7 @@
     <el-row class="searchArea">
       <el-col :span="20">
         <el-input v-model="searchValue" class="searchInput" clearable placeholder="请输入用户名">
-          <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
+          <el-button @click="handleSearch(searchValue)" slot="append" icon="el-icon-search"></el-button>
         </el-input>
         <!-- <el-button @click="$router.push({name:'goodsadd'})" type="success" plain>添加商品</el-button> -->
       </el-col>
@@ -20,7 +20,9 @@
     <el-table v-loading="loading" :data="list" style="width: 100%" height="400px">
       <el-table-column prop="id" label="id" width="80"></el-table-column>
       <el-table-column prop="displayName" label="用户名" width="110"></el-table-column>
+      <el-table-column prop="name" label="真实姓名" width="110"></el-table-column>
       <el-table-column prop="phone" label="电话" width="160"></el-table-column>
+      <el-table-column prop="sex" label="性别" width="160"></el-table-column>
       <el-table-column prop="createTime" label="创建日期" width="170">
         <template slot-scope="scope">{{scope.row.create_time | fmtDate}}</template>
       </el-table-column>
@@ -105,30 +107,44 @@
     methods: {
       async handleTableData() {
         // this.loading = true;
-        const res = await this.$http.get(`user/findAll/${this.pageNum}/${this.pageSize}`)
+        const name = { pageNum: this.pageNum, pageSize: this.pageSize }
+        const res = await this.$http.post('user/search', name)
         const { data: { data, code, message } } = res
-        console.log(data, code, message)
+        // console.log(data, code, message)
         if (code === 200) {
           this.list = data.list
           this.total = data.total
           this.loading = false
-          console.log(this.list)
+          // console.log(this.list)
         } else {
           this.$message.error(res.message)
         }
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
+        // console.log(`每页 ${val} 条`)
         this.pageSize = val;
         this.pageNum = 1;
         this.handleTableData();
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
+        // console.log(`当前页: ${val}`)
         this.pageNum = val;
         this.handleTableData();
       },
-      handleSearch() {
+      // 查找用户
+      async handleSearch(value) {
+        this.loading = true
+        const name = { displayName: value, pageNum: this.pageNum, pageSize: this.pageSize }
+        const res = await this.$http.post('user/search', name)
+        // console.log(res)
+        const {data, code, message} = res.data
+        if (code === 200) {
+          this.list = data.list
+          this.total = data.total
+          this.loading = false
+        } else {
+          this.$message.error(res.message)
+        }
       },
       // 删除按钮
       deleteUser(id) {
@@ -139,7 +155,7 @@
         })
           .then(async () => {
             const res = await this.$http.get(`user/del/${id} `);
-            console.log(res)
+            // console.log(res)
             const {
               data: { code, message }
             } = res.data;
