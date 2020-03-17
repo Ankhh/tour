@@ -8,8 +8,8 @@
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-select v-model="ruleForm.region" placeholder="请选择性别">
-            <el-option label="男" value="male"></el-option>
-            <el-option label="女" value="female"></el-option>
+            <el-option label="男" value="1"></el-option>
+            <el-option label="女" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="密码" prop="password">
@@ -44,6 +44,7 @@
           name: '',
           dob: '',
           id: '2b5791c731f941ca87807e69fb4e6721',
+          qqq: 'qqq',   //假数据
         },
         rules: {
           displayName: [
@@ -62,10 +63,26 @@
         }
       };
     },
+    created() {
+      this.handleFormData()
+    },
     methods: {
+      // 获取用户数据
+      async handleFormData() {
+        this.loading = true
+        const res = await this.$http.get(`user/searchPersonalInformation/qqq`)
+        console.log(res)
+        const {data, code, message} = res.data
+        if (code === 200) {
+          this.ruleForm = data;
+          this.loading = false
+        } else {
+          this.$message.error(message)
+        }
+      },
       // 提交事件
       async submitForm(formName) {
-        const res = await this.$http.post('user/update', this.ruleForm);
+        const res = await this.$http.post('user/changePassword', this.ruleForm);
         console.log(res)
         if (res.data.code === 200) {
           this.$message.success("修改成功")
@@ -76,13 +93,7 @@
       // 重置事件
       resetForm(formName) {
         this.$refs[formName].resetFields();
-      }
-    },
-    beforeCreate: async function () {
-      // async getPerData(formName) {
-        const res = await this.$http.get(`user/findById/${this.id}`)
-        console.log(res)
-      // }
+      },
     },
   }
 </script>

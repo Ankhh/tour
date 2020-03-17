@@ -163,12 +163,12 @@
       // 检索订单
       async handleSearch(searchValue) {
         this.loading = true
-        const res = this.$http.post(`order/${searchValue}`)
+        const res = await this.$http.post(`order/${searchValue}`)
         console.log(res)
         const { data, code, message } = res.data
         if (code === 200) {
-          this.list = data.list
-          this.total = data.total
+          this.list = data
+          // this.total = data.total
           this.loading = false
         } else {
           this.$message.error(message)

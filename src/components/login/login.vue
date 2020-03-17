@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     async handleLogin() {
-      const res = await this.$http.post(`user/login?phone=${this.formdata.phone}&password=${this.formdata.password}`);
+      const res = await this.$http.post(`user/login?displayName=${this.formdata.phone}&password=${this.formdata.password}`);
       console.log(res)
 
       if (res.data.code === 200) {
