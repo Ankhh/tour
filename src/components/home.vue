@@ -37,6 +37,7 @@
               class="el-menu-vertical-demo"
               background-color="#d2b48c"
               text-color="#fff"
+              default-active="homepage"
               active-text-color="#656565">
               <el-menu-item index="homepage">
                 <i class="el-icon-location"></i>
@@ -87,6 +88,7 @@ export default {
   data() {
     return {
       circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+      username: 'qqq',
     };
   },
   // 设置首页权限验证
@@ -98,7 +100,9 @@ export default {
     //     this.$message.warning("请先登录");
     //   }
   },
-  
+  created() {
+    this.personalData()
+  },
   methods: {
     // 退出登录功能
     handleLogout() {
@@ -114,6 +118,16 @@ export default {
       this.$router.push({
         name: "personal"
       })
+    },
+    async personalData() {
+      const res = await this.$http.get(`user/searchPersonalInformation/${this.username}`)
+      console.log(res)
+      const { data, code, message } = res.data
+      if (code === 200) {
+        this.circleUrl = data.avatarUrl
+      } else {
+        this.$message.error(message)
+      }
     }
   }
 };

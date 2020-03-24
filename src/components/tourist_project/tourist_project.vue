@@ -18,11 +18,14 @@
     </el-row>
     <!-- 表格 -->
     <el-table v-loading="loading" :data="list" style="width: 100%" height="400px">
-      <el-table-column prop="id" label="id" width="80"></el-table-column>
       <el-table-column prop="spot_name" label="景点名称" width="110"></el-table-column>
       <el-table-column prop="spot_adder" label="景点地址" width="160"></el-table-column>
       <el-table-column prop="spot_details" label="景点详情" width="170"></el-table-column>
-      <el-table-column prop="image" label="图片" width="160"></el-table-column>
+      <el-table-column prop="image" label="图片" width="160">
+        <template slot-scope="scope">
+          <img class="block_img" style="width:80px;height:80px;border:none;" :src="scope.row.image" /> 
+        </template>
+      </el-table-column>
       <el-table-column prop="date" label="操作" width="210">
         <template slot-scope="scope">
           <el-row>
@@ -68,6 +71,15 @@
         <el-form-item label="景点详情" :label-width="formLabelWidth">
           <el-input v-model="ruleForm.spot_details" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="景点图片" :label-width="formLabelWidth">
+          <el-upload
+            class="upload-demo"
+            :action="action"
+            :on-success="handleAvatarSuccess"
+            >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
@@ -85,6 +97,16 @@
         </el-form-item>
         <el-form-item label="景点详情" :label-width="formLabelWidth">
           <el-input v-model="ruleForm.spot_details" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="景点图片" :label-width="formLabelWidth">
+          <el-upload
+            class="upload-demo"
+            :action="action"
+            :on-success="handleAvatarSuccess"
+            v-model="ruleForm.image"
+            >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -113,7 +135,9 @@
           spot_name: '',
           spot_adder: '',
           spot_details: '',
-        }
+        },
+        action: "http://47.100.13.76:8081/file/upload",
+        spot_url: '',
       }
     },
     created() {
@@ -195,6 +219,10 @@
       // 新建保存按钮
       async submitForm(formdata) {
         // console.log(formdata)
+        formdata = {
+          ...formdata,
+          image: this.spot_url,
+        }
         const res = await this.$http.post('spot/saveSpot', formdata)
         // console.log(res)
         const { code, message } = res.data
@@ -208,9 +236,9 @@
       // 编辑按钮
       async editGoods(id) {
         this.dialogFormVisibleEdit = true;
-        console.log(id)
+        // console.log(id)
         const res = await this.$http.post(`spot/findSpotById/${id}`)
-        console.log(res)
+        // console.log(res)
         const { data, code, message } = res.data
         if (code === 200) {
           this.ruleForm = data
@@ -220,17 +248,28 @@
       },
       // 编辑保存按钮
       async handelEdit (ruleForm) {
-        console.log(ruleForm)
+        // console.log(ruleForm)
+        ruleForm = {
+          ...ruleForm,
+          image: this.spot_url
+        }
         const res = await this.$http.post('spot/updateSpot', ruleForm)
-        console.log(res)
+        // console.log(res)
         const { data, code, message } = res.data
         if (code === 200) {
-          this.dialogFormVisibleAdd = false;
+          this.dialogFormVisibleEdit = false;
           this.handleTableData()
         } else {
           this.$message.error(message)
         }
-      }
+      },
+      // 上传
+      handleAvatarSuccess(res, file) {
+        // console.log(res, file)
+        this.$message.success(res.msg)
+        this.imageUrl = URL.createObjectURL(file.raw);
+        this.spot_url = res.flag
+      },
     }
   }
 </script>

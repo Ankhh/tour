@@ -17,7 +17,7 @@ module.exports = {
       // pathRewrite: { 
       //   '^/api': 'http://47.100.13.76:8081' //路径重写 
       //   } 
-  } 
+      // } 
     },
 
     // Various Dev Server settings

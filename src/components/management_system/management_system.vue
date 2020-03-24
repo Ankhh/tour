@@ -18,7 +18,6 @@
         prop：每一行的数据名，来源于tableData数组中的对象值
     -->
     <el-table v-loading="loading" :data="list" style="width: 100%" height="400px">
-      <el-table-column prop="id" label="id" width="80"></el-table-column>
       <el-table-column prop="displayName" label="用户名" width="110"></el-table-column>
       <el-table-column prop="name" label="真实姓名" width="110"></el-table-column>
       <el-table-column prop="phone" label="电话" width="160"></el-table-column>

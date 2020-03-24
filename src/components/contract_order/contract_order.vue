@@ -12,7 +12,6 @@
     </el-row>
     <!-- 表格 -->
     <el-table v-loading="loading" :data="list" style="width: 100%" height="400px">
-      <el-table-column prop="id" label="id" width="80"></el-table-column>
       <el-table-column prop="proId" label="商品id" width="80"></el-table-column>
       <el-table-column prop="buyerId" label="买家id" width="110"></el-table-column>
       <el-table-column prop="sellerId" label="卖家id" width="110"></el-table-column>
@@ -126,14 +125,14 @@
     methods: {
       // 表格数据
       async handleTableData() {
-        this.loading = true
+        // this.loading = true
         const res = await this.$http.get(`order/findAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
         // console.log(res)
         const { data: { data, code, message } } = res
         if (code === 200) {
           this.list = data.list
           this.total = data.total
-          this.loading = false
+          // this.loading = false
         } else {
           this.$message.error(res.message)
         }

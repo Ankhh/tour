@@ -4,7 +4,6 @@
     <my-bread level1="留言板管理"></my-bread>
     <!-- 表格 -->
     <el-table v-loading="loading" :data="list" style="width: 100%" height="400px" class="tableBox">
-      <el-table-column prop="id" label="id" width="100"></el-table-column>
       <el-table-column prop="username" label="用户名" width="130"></el-table-column>
       <el-table-column prop="time" label="创建日期" width="170">
         <template slot-scope="scope">{{scope.row.create_time | fmtDate}}</template>

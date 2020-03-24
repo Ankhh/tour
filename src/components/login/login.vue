@@ -3,7 +3,7 @@
     <el-form label-position="left" label-width="80px" :model="formdata" class="form">
       <h2 style="text-align: center; margin-bottom: 20px">用户登录</h2>
       <el-form-item label="用户名">
-        <el-input v-model="formdata.phone" name="phone"></el-input>
+        <el-input v-model="formdata.username" name="username"></el-input>
       </el-form-item>
       <el-form-item label="密码">
         <el-input v-model="formdata.password" name="password"></el-input>
@@ -19,20 +19,21 @@ export default {
   data() {
     return {
       formdata: {
-        phone: "",
+        username: "",
         password: ""
       }
     };
   },
   methods: {
     async handleLogin() {
-      const res = await this.$http.post(`user/login?displayName=${this.formdata.phone}&password=${this.formdata.password}`);
+      const res = await this.$http.post(`user/login?phone=${this.formdata.username}&password=${this.formdata.password}`);
       console.log(res)
-
-      if (res.data.code === 200) {
+      const { data, code, message } = res.data
+      if (code === 200) {
         // 保存token的值
-        // localStorage.setItem("token", data.token);
-        console.log(localStorage)
+        console.log(data.phone)
+        localStorage.setItem("token", data);
+        localStorage.setItem("phone", data.phone);
         this.$router.push({
           name: "home"
         });

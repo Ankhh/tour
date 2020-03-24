@@ -17,10 +17,13 @@
     </el-row>
     <!-- 表格 -->
     <el-table v-loading="loading" :data="list" style="width: 100%" height="400px">
-      <el-table-column prop="id" label="id" width="120"></el-table-column>
       <el-table-column prop="goods_name" label="商品名称" width="160"></el-table-column>
       <el-table-column prop="goods_price" label="商品价格" width="160"></el-table-column>
-      <el-table-column prop="goods_url" label="商品地址" width="200"></el-table-column>
+      <el-table-column prop="goods_url" label="商品地址" width="230">
+        <template slot-scope="scope">
+          <img class="block_img" style="width:80px;height:80px;border:none;" :src="scope.row.goods_url" /> 
+        </template>
+      </el-table-column>
       <el-table-column prop="date" label="操作" width="210">
         <template slot-scope="scope">
           <el-row>
@@ -55,10 +58,19 @@
         <el-form-item label="商品地址" :label-width="formLabelWidth">
           <el-input v-model="ruleForm.goods_url" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="商品图片" :label-width="formLabelWidth">
+          <el-upload
+            class="upload-demo"
+            :action="action"
+            :on-success="handleAvatarSuccess"
+            >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+        <el-button type="primary" @click="submitForm(ruleForm)">立即创建</el-button>
       </div>
     </el-dialog>
     
@@ -82,6 +94,8 @@
         },
         formLabelWidth: "80px",
         dialogFormVisibleAdd: false,
+        action: "http://47.100.13.76:8081/file/upload",
+        goods_url: '',
       }
     },
     created() {
@@ -96,28 +110,25 @@
           pageSize: this.pageSize
         }
         const res = await this.$http.post('goods/search', page)
-        console.log(res)
         const { data: { data, code, message } } = res
-        console.log(data, code, message)
         if (code === 200) {
           this.list = data.list
           this.total = data.total
           this.loading = false
-          console.log(this.list)
         } else {
           this.$message.error(res.message)
         }
       },
       // 分页
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
+        // console.log(`每页 ${val} 条`)
         this.pageSize = val;
         this.pageNum = 1;
         this.handleTableData();
       },
       // 当前页
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
+        // console.log(`当前页: ${val}`)
         this.pageNum = val;
         this.handleTableData();
       },
@@ -132,7 +143,7 @@
         })
           .then(async () => {
             const res = await this.$http.get(`user/del/${id} `);
-            console.log(res)
+            // console.log(res)
             const {
               data: { code, message }
             } = res.data;
@@ -152,25 +163,37 @@
         this.ruleForm = {};
       },
       // 提交新建表单
-      submitForm(formName) {
-        console.log(formName)
-        this.dialogFormVisibleAdd = false;
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+      async submitForm(formName) {
+        formName = {
+          ...formName,
+          goods_url: this.goods_url
+        }
+        const res = await this.$http.post('goods/saveGoods', formName)
+        const { data, code, message } = res.data
+        if (code === 200) {
+          this.$message.success(message)
+          this.handleTableData()
+          this.dialogFormVisibleAdd = false; 
+        } else {
+          this.$messahe.error(message)
+        }
       },
+      // 上传
+      handleAvatarSuccess(res, file) {
+        // console.log(res, file)
+        this.$message.success(res.msg)
+        this.imageUrl = URL.createObjectURL(file.raw);
+        this.goods_url = res.flag
+      },
+      
     }
   }
 </script>
 
-<style scoped>
+<style scoped lang="less">
   .searchArea {
     margin-top: 20px;
     margin-bottom: 20px;
   }
+  
 </style>
