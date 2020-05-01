@@ -18,7 +18,7 @@ const Personal = () => import('@/components/personal/personal.vue')
 const TouristGoods = () => import('@/components/tourist_goods/tourist_goods.vue')
 
 const router = new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       name: 'home',

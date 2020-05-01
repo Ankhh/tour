@@ -8,7 +8,14 @@ import {
 const Http = {}
 Http.install = function (Vue) {
 
-  axios.defaults.baseURL = "http://47.100.13.76:8081"
+  axios.defaults.baseURL = "/api"
+
+  // if (process.env.NODE_ENV == 'development') {    
+  //   axios.defaults.baseURL = 'http://47.100.13.76:8081';} 
+  // else if (process.env.NODE_ENV == 'production') {    
+  //   axios.defaults.baseURL = 'localhost:8080';
+  // }
+
 
   // 添加请求拦截器
   axios.interceptors.request.use(function (config) {

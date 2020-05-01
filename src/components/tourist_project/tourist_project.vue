@@ -136,7 +136,7 @@
           spot_adder: '',
           spot_details: '',
         },
-        action: "http://47.100.13.76:8081/file/upload",
+        action: "http://47.100.13.76:8081/api/file/upload",
         spot_url: '',
       }
     },

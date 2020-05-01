@@ -4,7 +4,7 @@
     <!-- 搜索框 -->
     <el-row class="searchArea">
       <el-col :span="20">
-        <el-input v-model="searchValue" class="searchInput" clearable placeholder="请输入用户名">
+        <el-input v-model="name" class="searchInput" clearable placeholder="请输入商品名">
           <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
         </el-input>
       </el-col>
@@ -73,7 +73,34 @@
         <el-button type="primary" @click="submitForm(ruleForm)">立即创建</el-button>
       </div>
     </el-dialog>
-    
+    <!-- 编辑用户表单 -->
+    <el-dialog title="商品修改" :visible.sync="dialogFormVisibleEdit">
+      <!--  <el-form :model="ruleForm"> -->
+      <el-form :model="ruleForm" ref="ruleForm">
+        <el-form-item label="商品名称" :label-width="formLabelWidth">
+          <el-input v-model="ruleForm.goods_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="商品价格" :label-width="formLabelWidth">
+          <el-input v-model="ruleForm.goods_price" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="商品地址" :label-width="formLabelWidth">
+          <el-input v-model="ruleForm.goods_url" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="商品图片" :label-width="formLabelWidth">
+          <el-upload
+            class="upload-demo"
+            :action="action"
+            :on-success="handleAvatarSuccess"
+            >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm(ruleForm)">立即创建</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -85,7 +112,7 @@
         pageSize: 10,
         list: [],
         total: 0,
-        searchValue: '',
+        name: '',
         loading: false,
         ruleForm: {
           goods_name: "",
@@ -94,7 +121,8 @@
         },
         formLabelWidth: "80px",
         dialogFormVisibleAdd: false,
-        action: "http://47.100.13.76:8081/file/upload",
+        dialogFormVisibleEdit: false,
+        action: "http://47.100.13.76:8081/api/file/upload",
         goods_url: '',
       }
     },
@@ -121,41 +149,42 @@
       },
       // 分页
       handleSizeChange(val) {
-        // console.log(`每页 ${val} 条`)
         this.pageSize = val;
         this.pageNum = 1;
         this.handleTableData();
       },
       // 当前页
       handleCurrentChange(val) {
-        // console.log(`当前页: ${val}`)
         this.pageNum = val;
         this.handleTableData();
       },
-      handleSearch() {
+      async handleSearch() {
+        const page = {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          name:this.name,
+        }
+        const res = await this.$http.post('goods/search', page)
+        const { data, code, message } = res.data;
+        if (code === 200) {
+          this.list = data.list
+          this.total = data.total
+          this.$message.success(message);
+        } else {
+          this.$message.error(message);
+        }
       },
       // 删除按钮
-      deleteUser(id) {
-        this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(async () => {
-            const res = await this.$http.get(`user/del/${id} `);
-            // console.log(res)
-            const {
-              data: { code, message }
-            } = res.data;
-            if (code === 200) {
-              this.pagenum = 1;
-              this.handleTableData();
-              this.$message.success(message);
-            }
-          })
-          .catch(() => {
-            this.$message.warning("取消删除");
-          });
+      async deleteUser(id) {
+        const res = await this.$http.get(`goods/del/${id}`);
+        const { data, code, message } = res.data;
+        if (code === 200) {
+          this.pagenum = 1;
+          this.handleTableData();
+          this.$message.success(message);
+        } else {
+          this.$message.error(message);
+        }
       },
       // 打开新建按钮
       addUser() {
@@ -174,13 +203,18 @@
           this.$message.success(message)
           this.handleTableData()
           this.dialogFormVisibleAdd = false; 
+          this.dialogFormVisibleEdit = false; 
         } else {
           this.$messahe.error(message)
         }
       },
+      //编辑
+      editUser(row) {
+        this.ruleForm = row
+        this.dialogFormVisibleEdit = true
+      },
       // 上传
       handleAvatarSuccess(res, file) {
-        // console.log(res, file)
         this.$message.success(res.msg)
         this.imageUrl = URL.createObjectURL(file.raw);
         this.goods_url = res.flag

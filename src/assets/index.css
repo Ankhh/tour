@@ -9,3 +9,11 @@ h2 {
 a {
   text-decoration: none;
 }
+
+.el-upload {
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  outline: 0;
+  border: 1px dashed #ccc !important;
+}

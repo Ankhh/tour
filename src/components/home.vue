@@ -6,16 +6,12 @@
         <el-col :span="3">
           <img width="110px" src="../assets/logo.png">
         </el-col>
-        <el-col :span="20" class="middleHead">
+        <el-col :span="19" class="middleHead">
           <h2>旅游管理系统</h2>
         </el-col>
-        <!--  <el-col :span="2">
-          <div class="block"><el-avatar :size="30" :src="circleUrl"></el-avatar></div>
-          <a href="#" class="personal" @click="handlePersonal()">个人信息</a>
-        </el-col>
         <el-col :span="1">
-          <i class="el-icon-switch-button" @click="handleLogout()">登出</i>
-        </el-col>-->
+          <a href="http://localhost:8081/front.html" class="personal">返回前台</a>
+        </el-col>
         <el-col :span="1">
           <el-dropdown>
             <div class="el-dropdown-link"><el-avatar :size="30" :src="circleUrl"></el-avatar></div>
@@ -37,7 +33,6 @@
               class="el-menu-vertical-demo"
               background-color="#d2b48c"
               text-color="#fff"
-              default-active="homepage"
               active-text-color="#656565">
               <el-menu-item index="homepage">
                 <i class="el-icon-location"></i>
@@ -87,8 +82,9 @@
 export default {
   data() {
     return {
-      circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+      circleUrl: 'http://47.100.13.76:8888/group1/M00/00/00/rBEWVl6qLhmAXhk6AAMqDjCqceY807.jpg',
       username: 'qqq',
+      phone: localStorage.getItem('phone')
     };
   },
   // 设置首页权限验证
@@ -106,10 +102,8 @@ export default {
   methods: {
     // 退出登录功能
     handleLogout() {
-      localStorage.clear();
-      this.$router.push({
-        name: "login"
-      });
+      // localStorage.clear();
+      this.$router.push('/login');
       // 退出成功
       this.$message.success("退出成功");
     },
@@ -120,11 +114,12 @@ export default {
       })
     },
     async personalData() {
-      const res = await this.$http.get(`user/searchPersonalInformation/${this.username}`)
+      const res = await this.$http.get(`user/searchPersonalInformation/${this.phone}`)
       console.log(res)
       const { data, code, message } = res.data
       if (code === 200) {
-        this.circleUrl = data.avatarUrl
+        // this.circleUrl = data.avatarUrl
+        this.$message.success(message)
       } else {
         this.$message.error(message)
       }

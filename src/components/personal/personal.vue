@@ -14,6 +14,9 @@
               <el-option label="女" value="0"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="电话" prop="phone">
+            <el-input v-model="ruleForm.phone"></el-input>
+          </el-form-item>
           <el-form-item label="密码" prop="password">
             <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
           </el-form-item>
@@ -26,6 +29,12 @@
               type="datetime"
               placeholder="选择日期时间">
             </el-date-picker>
+          </el-form-item>
+          <el-form-item label="头像" prop="avatarUrl">
+            <el-input v-model="ruleForm.avatarUrl"></el-input>
+            <!-- <template slot-scope="scope">
+              <img class="block_img" style="width:80px;height:80px;border:none;" :src="scope.row.avatarUrl" /> 
+            </template> -->
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
@@ -57,6 +66,7 @@
           name: '',
           dob: '',
           id: '2b5791c731f941ca87807e69fb4e6721',
+          avatarUrl: '',
           // qqq: '111',   //假数据,
         },
         phone: localStorage.getItem("phone"),
@@ -65,9 +75,9 @@
             { required: true, message: '请输入活动名称', trigger: 'blur' },
             { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
           ],
-          // sex: [
-          //   { required: true, message: '请选择性别', }
-          // ],
+          phone: [
+            { required: true, message: '请输入电话', }
+          ],
           password: [
             { required: true,  message: '要输入密码', trigger: 'blur' },
           ],
@@ -76,7 +86,7 @@
           ]
         },
         imageUrl: '',
-        action: "http://47.100.13.76:8081/file/upload",
+        action: "http://47.100.13.76:8081/api/file/upload",
         avatarUrl: '',
       };
     },
@@ -122,10 +132,10 @@
       },
       // 上传
       handleAvatarSuccess(res, file) {
-        console.log(res, file)
         this.$message.success(res.msg)
         this.imageUrl = URL.createObjectURL(file.raw);
         this.avatarUrl = res.flag
+        localStorage.setItem('photo', res.flag)
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
@@ -154,23 +164,20 @@ h2 {
     margin-top: 20px;
     width: 60%;
   }
-  .avatar-uploader .el-upload{
+  .avatar-uploader{
     width: 30%;
     position: relative;
     overflow: hidden;
     margin-left: 30px;
     display: inline-block;
     text-align: center;
-    cursor: pointer;
+    // cursor: pointer;
     .el-upload {
       display: inline-block;
       text-align: center;
       cursor: pointer;
       outline: 0;
-      border: 1px dashed #ccc;
-    }
-    .el-upload:hover {
-      border-color: #409EFF;
+      border: 1px dashed #ccc !important;
     }
     .avatar-uploader-icon {
       font-size: 28px;

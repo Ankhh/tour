@@ -2,11 +2,11 @@
   <div class="box">
     <el-form label-position="left" label-width="80px" :model="formdata" class="form">
       <h2 style="text-align: center; margin-bottom: 20px">用户登录</h2>
-      <el-form-item label="用户名">
+      <el-form-item label="电话号码">
         <el-input v-model="formdata.username" name="username"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="formdata.password" name="password"></el-input>
+        <el-input type="password" v-model="formdata.password" name="password"></el-input>
       </el-form-item>
       <el-button type="primary" class="btn" @click="handleLogin">登录</el-button>
       <el-link type="primary" class="register" @click="handleRegister()">没有账号？点击注册</el-link>
@@ -57,6 +57,7 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: #656565;
+  /* background: url(../../../../assets/com.jpg) cover no-repeat top center; */
 }
 .form {
   width: 400px;

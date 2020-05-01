@@ -18,9 +18,8 @@
         prop：每一行的数据名，来源于tableData数组中的对象值
     -->
     <el-table v-loading="loading" :data="list" style="width: 100%" height="400px">
-      <el-table-column prop="displayName" label="用户名" width="110"></el-table-column>
+      <el-table-column prop="phone" label="用户名" width="110"></el-table-column>
       <el-table-column prop="name" label="真实姓名" width="110"></el-table-column>
-      <el-table-column prop="phone" label="电话" width="160"></el-table-column>
       <el-table-column prop="sex" label="性别" width="160"></el-table-column>
       <el-table-column prop="createTime" label="创建日期" width="170">
         <template slot-scope="scope">{{scope.row.create_time | fmtDate}}</template>
@@ -146,27 +145,19 @@
         }
       },
       // 删除按钮
-      deleteUser(id) {
-        this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(async () => {
-            const res = await this.$http.get(`user/del/${id} `);
-            // console.log(res)
-            const {
-              data: { code, message }
-            } = res.data;
-            if (code === 200) {
-              this.pagenum = 1;
-              this.handleTableData();
-              this.$message.success(message);
-            }
-          })
-          .catch(() => {
-            this.$message.warning("取消删除");
-          });
+      async deleteUser(id) {
+        const res = await this.$http.get(`user/del/${id} `)
+        // console.log(res)
+        const {
+          data, code, message
+        } = res.data;
+        if (code === 200) {
+          this.pageNum = 1;
+          this.handleTableData();
+          this.$message.success(message);
+        } else {
+          this.$message.warning("取消删除");
+        }
       },
     }
   }
